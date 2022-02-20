@@ -7,7 +7,8 @@ import os
 from modules import leveling
 import time
 from datetime import datetime
-from asyncio import sleep 
+from asyncio import sleep
+import socket
 
 # Get configuration.json
 with open("configuration.json", "r") as config: 
@@ -16,11 +17,22 @@ with open("configuration.json", "r") as config:
 	prefix = data["prefix"]
 	owner_id = data["owner_id"]
 
-
+def ping_server(server: str, port=80, timeout=3):
+    """ping server"""
+    try:
+        socket.setdefaulttimeout(timeout)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.connect((server, port))
+    except OSError as error:
+        return False
+    else:
+        s.close()
+        return True
 
 reddit = praw.Reddit(client_id='faXrkys5czbn-A',
                      client_secret='059OT4n2oYlDj8jwPqGPhFlmGEKsEQ',
                      user_agent="Chrome: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36")
+
 
 
 # Intents
@@ -41,7 +53,7 @@ async def on_ready():
 	await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name =f"{bot.command_prefix}commands"))
 
 @bot.event
-async def on_member_join(self, member:discord.Member):
+async def on_member_join(member:discord.Member):
     memberregister = member.id
     leveling.register(memberregister)
     await sleep(60*10)
@@ -54,6 +66,23 @@ async def on_member_remove(member):
     guild = member.guild
     channel = get(guild.channels, name = '⭐⎜All Member')
     await channel.edit(name = f'⭐⎜All Member: {guild.member_count}')    
+
+@bot.command()
+async def pingserver(ctx, arg = None):
+    message = await ctx.send(f"Pinging {arg}")
+    count = 0
+    if arg == None:
+        await message.edit(content=f"No IP or Website Given...")
+    else:
+        for i in range(10):
+            count = count +1
+            response = ping_server(arg)
+            if response == True:
+                await message.edit(content=f"{arg} is Online! {count} Pings")
+                time.sleep(1)
+            else:
+                await message.edit(content=f"{arg} is Offline! {count} Pings")
+                time.sleep(1)      
 
 @bot.command()
 @has_permissions(administrator=True)
@@ -197,6 +226,7 @@ async def commands(ctx):
     embed.add_field(name="GetReddit", value="Usage: <getreddit subreddit | Gets a Random Post of chosen Subreddit!", inline=False)
     embed.add_field(name="Info", value="Usage: <info | Shows Info about the Bot and Server!", inline=False)
     embed.add_field(name="Ping", value="Usage: <ping | Shows Ping of the Bot", inline=False)
+    embed.add_field(name="Ping Server", value="Usage: <pingserver ip | Shows reachability if an IP Adress!", inline=False)
     embed.add_field(name="Register", value="Usage: <register @member | Register a Member to the Leveling System!", inline=False)
     embed.add_field(name="Level", value="Usage: <level or <level @member | Shows the Current Level of a Member!", inline=False)
     embed.add_field(name="Embed Message", value="[Admin] Usage: <msg message | Sends a Embed message!", inline=False)
