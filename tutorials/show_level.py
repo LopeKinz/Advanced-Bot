@@ -1,7 +1,7 @@
 @client.command()
 async def level(ctx, Member:discord.Member = None):
     try:  
-        if Member == None:
+        if Member is None:
             memberranknone = ctx.author.id
             rank1 = leveling.getlvl(memberranknone)
             await ctx.send(f"{ctx.author.mention} is Level {rank1}")

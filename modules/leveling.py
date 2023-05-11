@@ -99,28 +99,22 @@ def reset(member_id):
 
 
 def log_register(member_id):
-    log = f"{member_id.mention} is now Registered!"
-    return(log)
+    return f"{member_id.mention} is now Registered!"
 
 def log_addlvl(member_id):
-    log = f"{member_id.mention} has Leveled UP"
-    return(log)
+    return f"{member_id.mention} has Leveled UP"
 
 def log_addxp(member_id):
-    log = f"{member_id.mention} has gained XP"
-    return(log)
+    return f"{member_id.mention} has gained XP"
 
 def log_getlvl(member_id):
-    log = f"{member_id.mention} Gettign LVL from JSON!"
-    return(log)
+    return f"{member_id.mention} Gettign LVL from JSON!"
 
 def log_getxp(member_id):
-    log = f"{member_id.mention} Getting XP from JSON!"
-    return(log)
+    return f"{member_id.mention} Getting XP from JSON!"
 
 def log_resetxp(member_id):
-    log = f"{member_id.mention} XP Reset!"
-    return(log)
+    return f"{member_id.mention} XP Reset!"
 
 def log_reset(member_id):
     log = f"{member_id} Reset ALL!"

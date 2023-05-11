@@ -69,20 +69,20 @@ async def on_member_remove(member):
 
 @bot.command()
 async def pingserver(ctx, arg = None):
-    message = await ctx.send(f"Pinging {arg}")
-    count = 0
-    if arg == None:
-        await message.edit(content=f"No IP or Website Given...")
-    else:
-        for i in range(10):
-            count = count +1
-            response = ping_server(arg)
-            if response == True:
-                await message.edit(content=f"{arg} is Online! {count} Pings")
-                time.sleep(1)
-            else:
-                await message.edit(content=f"{arg} is Offline! {count} Pings")
-                time.sleep(1)      
+	message = await ctx.send(f"Pinging {arg}")
+	count = 0
+	if arg is None:
+		await message.edit(content="No IP or Website Given...")
+	else:
+		for _ in range(10):
+			count = count +1
+			response = ping_server(arg)
+			if response == True:
+				await message.edit(content=f"{arg} is Online! {count} Pings")
+			else:
+				await message.edit(content=f"{arg} is Offline! {count} Pings")      
+
+			time.sleep(1)      
 
 @bot.command()
 @has_permissions(administrator=True)
@@ -151,63 +151,63 @@ async def register(ctx , Member:discord.Member):
 @bot.command()
 @has_permissions(administrator=True)
 async def msg(ctx, *, args = None):
-    await bot.wait_until_ready()
-    if args == None:
-        message_content = "Please wait, we will be with you shortly!"
-    else:
-        message_content = "".join(args)
-        em = discord.Embed(title="", description="{}".format(message_content))
-        em.set_footer(text=f"{ctx.author}")
-        await ctx.send(embed=em)
-        await ctx.message.delete()
+	await bot.wait_until_ready()
+	if args is None:
+		message_content = "Please wait, we will be with you shortly!"
+	else:
+		message_content = "".join(args)
+		em = discord.Embed(title="", description=f"{message_content}")
+		em.set_footer(text=f"{ctx.author}")
+		await ctx.send(embed=em)
+		await ctx.message.delete()
         
 
 @bot.command()
 async def userinfo(ctx, *, user: discord.Member = None):
-    if user is None:
-        user = ctx.author      
-    date_format = "%a, %d %b %Y %I:%M %p"
-    embed = discord.Embed(color=0xdfa3ff, description=user.mention)
-    embed.set_author(name=str(user), icon_url=user.avatar_url)
-    embed.set_thumbnail(url=user.avatar_url)
-    embed.add_field(name="Joined", value=user.joined_at.strftime(date_format))
-    members = sorted(ctx.guild.members, key=lambda m: m.joined_at)
-    embed.add_field(name="Join position", value=str(members.index(user)+1))
-    embed.add_field(name="Registered", value=user.created_at.strftime(date_format))
-    if len(user.roles) > 1:
-        role_string = ' '.join([r.mention for r in user.roles][1:])
-        embed.add_field(name="Roles [{}]".format(len(user.roles)-1), value=role_string, inline=False)
-    perm_string = ', '.join([str(p[0]).replace("_", " ").title() for p in user.guild_permissions if p[1]])
-    embed.add_field(name="Guild permissions", value=perm_string, inline=False)
-    embed.set_footer(text='ID: ' + str(user.id))
-    return await ctx.send(embed=embed)
+	if user is None:
+	    user = ctx.author
+	date_format = "%a, %d %b %Y %I:%M %p"
+	embed = discord.Embed(color=0xdfa3ff, description=user.mention)
+	embed.set_author(name=str(user), icon_url=user.avatar_url)
+	embed.set_thumbnail(url=user.avatar_url)
+	embed.add_field(name="Joined", value=user.joined_at.strftime(date_format))
+	members = sorted(ctx.guild.members, key=lambda m: m.joined_at)
+	embed.add_field(name="Join position", value=str(members.index(user)+1))
+	embed.add_field(name="Registered", value=user.created_at.strftime(date_format))
+	if len(user.roles) > 1:
+		role_string = ' '.join([r.mention for r in user.roles][1:])
+		embed.add_field(
+			name=f"Roles [{len(user.roles) - 1}]", value=role_string, inline=False
+		)
+	perm_string = ', '.join([str(p[0]).replace("_", " ").title() for p in user.guild_permissions if p[1]])
+	embed.add_field(name="Guild permissions", value=perm_string, inline=False)
+	embed.set_footer(text=f'ID: {str(user.id)}')
+	return await ctx.send(embed=embed)
 
 @bot.command()
 async def level(ctx, Member:discord.Member = None):
-    message = await ctx.send("Getting Level!")
-    try:  
-        if Member == None:
-            memberranknone = ctx.author.id
-            rank1 = leveling.getlvl(memberranknone)
-            xp1 = leveling.getxp(memberranknone)
-            embed=discord.Embed(title="**Level System**", description=f"**{ctx.author}**", color=0xff0000)
-            embed.set_thumbnail(url=ctx.author.avatar_url)
-            embed.add_field(name="Level: ", value=f"{rank1}", inline=False)
-            embed.add_field(name="XP", value=f"{xp1}/1000 XP", inline=False)
-            embed.set_footer(text=f"Requested by {ctx.author}")
-            await message.edit(embed=embed)
-        else:
-            memberrank = Member.id
-            rank2 = leveling.getlvl(memberrank)
-            xp2 = leveling.getxp(memberrank)
-            embed=discord.Embed(title="**Level System**", description=f"**{Member}**", color=0xff0000)
-            embed.set_thumbnail(url=Member.avatar_url)
-            embed.add_field(name="Level: ", value=f"{rank2}", inline=False)
-            embed.add_field(name="XP", value=f"{xp2}/1000 XP", inline=False)
-            embed.set_footer(text=f"Requested by {ctx.author}")
-            await message.edit(embed=embed)
-    except:
-        await message.edit(content=f"Error while getting {Member}'s Level")
+	message = await ctx.send("Getting Level!")
+	try:  
+		if Member is None:
+			memberranknone = ctx.author.id
+			rank1 = leveling.getlvl(memberranknone)
+			xp1 = leveling.getxp(memberranknone)
+			embed=discord.Embed(title="**Level System**", description=f"**{ctx.author}**", color=0xff0000)
+			embed.set_thumbnail(url=ctx.author.avatar_url)
+			embed.add_field(name="Level: ", value=f"{rank1}", inline=False)
+			embed.add_field(name="XP", value=f"{xp1}/1000 XP", inline=False)
+		else:
+			memberrank = Member.id
+			rank2 = leveling.getlvl(memberrank)
+			xp2 = leveling.getxp(memberrank)
+			embed=discord.Embed(title="**Level System**", description=f"**{Member}**", color=0xff0000)
+			embed.set_thumbnail(url=Member.avatar_url)
+			embed.add_field(name="Level: ", value=f"{rank2}", inline=False)
+			embed.add_field(name="XP", value=f"{xp2}/1000 XP", inline=False)
+		embed.set_footer(text=f"Requested by {ctx.author}")
+		await message.edit(embed=embed)
+	except:
+	    await message.edit(content=f"Error while getting {Member}'s Level")
 
 @bot.command()
 async def ping(ctx):
@@ -238,15 +238,15 @@ async def commands(ctx):
 
 @bot.command()
 async def meme(ctx):
-    try:
-        message = await ctx.send("Getting good meme...")
-        memes_submissions = reddit.subreddit('memes').new()
-        post_to_pick = random.randint(1, 100)
-        for i in range(0, post_to_pick):
-            submission = next(x for x in memes_submissions if not x.stickied)
-        await message.edit(content=submission.url)
-    except:
-        await message.edit(content=f"Error while getting random Meme!")
+	try:
+		message = await ctx.send("Getting good meme...")
+		memes_submissions = reddit.subreddit('memes').new()
+		post_to_pick = random.randint(1, 100)
+		for _ in range(0, post_to_pick):
+			submission = next(x for x in memes_submissions if not x.stickied)
+		await message.edit(content=submission.url)
+	except:
+		await message.edit(content="Error while getting random Meme!")
 
 
 
@@ -257,19 +257,19 @@ async def restart(ctx):
 
 @bot.command()
 async def getreddit(ctx, arg=None):
-    message = await ctx.send(f"Gettting random Post of {arg}!")
-    if arg == None:
-        await message.edit(content=f"No Subreddit Entered!")
-    else:
-        try:
-            subreddit = str(arg)
-            memes_submissions = reddit.subreddit(subreddit).new()
-            post_to_pick = random.randint(1, 100)
-            for i in range(0, post_to_pick):
-                submission = next(x for x in memes_submissions if not x.stickied)
-            await message.edit(content=submission.url)
-        except:
-            await message.edit(content=f"Error while getting random Post from {subreddit}!")
+	message = await ctx.send(f"Gettting random Post of {arg}!")
+	if arg is None:
+		await message.edit(content="No Subreddit Entered!")
+	else:
+		try:
+			subreddit = str(arg)
+			memes_submissions = reddit.subreddit(subreddit).new()
+			post_to_pick = random.randint(1, 100)
+			for _ in range(0, post_to_pick):
+				submission = next(x for x in memes_submissions if not x.stickied)
+			await message.edit(content=submission.url)
+		except:
+		    await message.edit(content=f"Error while getting random Post from {subreddit}!")
 
 @bot.command()
 async def info(ctx):
